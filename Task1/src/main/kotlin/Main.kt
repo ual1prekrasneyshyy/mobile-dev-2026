@@ -1,4 +1,4 @@
-fun main() {
+suspend fun main() {
 
     while(true) {
         println("PRESS [1] to go to the task manager")

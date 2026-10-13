@@ -1,3 +1,4 @@
+import kotlinx.coroutines.delay
 import kotlin.coroutines.suspendCoroutine
 
 sealed class Aircraft {
@@ -7,12 +8,12 @@ sealed class Aircraft {
     data class Airbus(val speed: Int): Aircraft()
 }
 
-fun simulateAircraftMotion() {
+suspend fun simulateAircraftMotion() {
     motion(Aircraft.Boeing(800))
     motion(Aircraft.Airbus(850))
 }
 
-fun motion(aircraft: Aircraft) {
+suspend fun motion(aircraft: Aircraft) {
     var distance = 0
 
     for (hour in 1..15) {
@@ -26,6 +27,6 @@ fun motion(aircraft: Aircraft) {
             println("$hour hour: Boeing distance $distance km")
         }
 
-        Thread.sleep(2000)
+        delay(1000)
     }
 }
