@@ -1,16 +1,19 @@
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.launch
 
 sealed class Aircraft {
-    object Vehicle : Aircraft()
-
+    data class Embraer(val speed: Int) : Aircraft()
     data class Boeing(val speed: Int): Aircraft()
     data class Airbus(val speed: Int): Aircraft()
 }
 
-suspend fun simulateAircraftMotion() {
-    motion(Aircraft.Boeing(800))
-    motion(Aircraft.Airbus(850))
+suspend fun simulateAircraftMotion(){
+    coroutineScope {
+        launch { motion(Aircraft.Embraer(700)) }
+        launch { motion(Aircraft.Boeing(800)) }
+        launch { motion(Aircraft.Airbus(900)) }
+    }
 }
 
 suspend fun motion(aircraft: Aircraft) {
@@ -27,6 +30,11 @@ suspend fun motion(aircraft: Aircraft) {
             println("$hour hour: Boeing distance $distance km")
         }
 
-        delay(1000)
+        if (aircraft is Aircraft.Embraer) {
+            distance += aircraft.speed
+            println("$hour hour: Embraer distance $distance km")
+        }
+
+        delay(1200)
     }
 }

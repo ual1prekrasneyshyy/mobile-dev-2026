@@ -2,7 +2,7 @@ suspend fun main() {
 
     while(true) {
         println("PRESS [1] to go to the task manager")
-        println("PRESS [2] to view aircraft motion")
+        println("PRESS [2] to simulate aircraft motion")
         println("PRESS [x] to exit")
 
         val section = readln()
