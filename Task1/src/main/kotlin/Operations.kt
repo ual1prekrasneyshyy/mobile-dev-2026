@@ -11,7 +11,7 @@ fun printNotStartedTasks() {
 
     while (true) {
         println("PRESS [1] to start task")
-        println("PRESS [<] to go to main menu")
+        println("PRESS [<] to go to quit")
 
         val input = readln()
 
@@ -34,7 +34,7 @@ fun printExecutingTasks() {
 
     while (true) {
         println("PRESS [1] to complete task")
-        println("PRESS [<] to go to main menu")
+        println("PRESS [<] to go to quit")
 
         val input = readln()
 
