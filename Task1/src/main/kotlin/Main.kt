@@ -15,7 +15,7 @@ fun main() {
         val choice = readln()
 
         when (choice) {
-            "1" -> println(tasks)
+            "1" -> printAllTasks()
             "2" -> printCompletedTasks()
             "3" -> printExecutingTasks()
             "4" -> printNotStartedTasks()
@@ -25,7 +25,7 @@ fun main() {
                 println("Good bye")
                 break
             }
-            else -> println("Invalid choice")
+            else -> println("Invalid choice. Try again")
         }
     }
 }

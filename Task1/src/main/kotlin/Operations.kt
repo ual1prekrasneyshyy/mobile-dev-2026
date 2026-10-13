@@ -1,3 +1,7 @@
+fun printAllTasks() {
+    tasks.forEach { it -> println(it) }
+}
+
 fun printCompletedTasks() {
     getTasksByStatus(StatusEnum.COMPLETED).forEach { task -> println(task) }
 }
@@ -13,14 +17,14 @@ fun printNotStartedTasks() {
 
         when (input) {
             "1" -> {
-                println("Choose task ID:")
+                print("Choose task ID: ")
                 val taskId = readln().toInt()
                 val result = changeStatus(taskId)
                 println(result)
                 break
             }
             "<" -> break
-            else -> println ("Invalid command")
+            else -> println("Invalid choice. Try again")
         }
     }
 }
@@ -36,20 +40,20 @@ fun printExecutingTasks() {
 
         when (input) {
             "1" -> {
-                println("Choose task ID:")
+                print("Choose task ID: ")
                 val taskId = readln().toInt()
                 val result = changeStatus(taskId)
                 println(result)
                 break
             }
             "<" -> break
-            else -> println ("Invalid command")
+            else -> println("Invalid choice. Try again")
         }
     }
 }
 
 fun addNewTask() {
-    println("Enter task name: ")
+    print("Enter task name: ")
     val name = readln()
 
     print("Enter task description: ")
