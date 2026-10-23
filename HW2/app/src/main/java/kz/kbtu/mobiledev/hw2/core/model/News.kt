@@ -7,3 +7,9 @@ data class News(
     val author: String,
     val views: Int,
 )
+
+data class ArticleDto(
+    var title: String = "",
+    var content: String = "",
+    var author: String = ""
+)
