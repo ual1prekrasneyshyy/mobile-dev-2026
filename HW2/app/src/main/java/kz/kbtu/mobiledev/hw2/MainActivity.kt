@@ -160,7 +160,7 @@ fun PageContent(modifier: Modifier) {
             Spacer(modifier = Modifier.height(20.dp))
 
 
-            Text(text = "Articles", fontSize = 25.sp, fontWeight = FontWeight.Medium)
+            Text(text = "Articles (${news.size})", fontSize = 25.sp, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -212,7 +212,7 @@ fun ArticleBox(n: News) {
             Row {
                 Text(
                     text = n.title,
-                    fontSize = 18   .sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
