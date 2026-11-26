@@ -11,39 +11,26 @@ import kz.kbtu.mobiledev.hw3.model.entity.Article
 import kz.kbtu.mobiledev.hw3.model.repository.ArticleRepository
 
 
-class AddArticleViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
+class AddArticleViewModel(
+    val onRedirect: () -> Unit,
+    private val articleRepository: ArticleRepository
+) : ViewModel() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    private var _articleTitle by mutableStateOf("")
-    private var _articleContent by mutableStateOf("")
-    private var _articleAuthor by mutableStateOf("")
-
-    val articleTitle = _articleTitle
-    val articleContent = _articleContent
-    val articleAuthor = _articleAuthor
-
-    fun setArticleTitle (ttl: String) {
-        _articleTitle = ttl
-    }
-
-    fun setArticleContent (cnt: String) {
-        _articleContent = cnt
-    }
-
-    fun setArticleAuthor (author: String) {
-        _articleAuthor = author
-    }
+    var articleTitle by mutableStateOf("")
+    var articleContent by mutableStateOf("")
+    var articleAuthor by mutableStateOf("")
 
     fun validate(): Boolean {
-        if(_articleTitle == "") {
+        if(articleTitle == "") {
             return false
         }
 
-        if(_articleContent == "") {
+        if(articleContent == "") {
             return false
         }
 
-        if(_articleAuthor == "") {
+        if(articleAuthor == "") {
             return false
         }
 
@@ -53,9 +40,16 @@ class AddArticleViewModel(private val articleRepository: ArticleRepository) : Vi
     fun save() {
         if(validate()) {
             coroutineScope.launch(Dispatchers.IO) {
-                articleRepository.insertArticle(Article(null, _articleTitle, _articleContent, _articleAuthor, 0))
+                articleRepository.insertArticle(Article(null, articleTitle, articleContent, articleAuthor, 0))
+                clear()
             }
-//                navigateBack()
+            onRedirect()
         }
+    }
+
+    fun clear() {
+        articleTitle = ""
+        articleContent = ""
+        articleAuthor = ""
     }
 }
