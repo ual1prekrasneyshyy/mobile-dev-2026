@@ -4,68 +4,49 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import kotlinx.serialization.Serializable
-import kz.kbtu.mobiledev.hw3.model.repository.ArticleRepository
-import kz.kbtu.mobiledev.hw3.viewmodel.AddArticleViewModel
-import kz.kbtu.mobiledev.hw3.viewmodel.ArticleDetailsViewModel
-import kz.kbtu.mobiledev.hw3.viewmodel.ArticlesListViewModel
-import kz.kbtu.mobiledev.hw3.viewmodel.UpdateArticleViewModel
-
-@Serializable
-object ArticleList
-
-@Serializable
-object AddArticle
-
-@Serializable
-data class ArticleDetails(val id: Int)
-
-@Serializable
-data class UpdateArticle(val id: Int)
+import androidx.navigation.navArgument
 
 @Composable
-fun Navigation(articleRepository: ArticleRepository) {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = ArticleList, modifier = Modifier.padding(12.dp)) {
-        composable<ArticleList> {
+fun Navigation(navController: NavHostController = rememberNavController()) {
+    NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(12.dp)) {
+        composable(route = "home") {
             ArticleListPage(
-                onNavigateToAddArticlePage = { navController.navigate(AddArticle) },
-                onNavigateToArticleDetailsPage = { navController.navigate(ArticleDetails(it)) },
-                vm = ArticlesListViewModel(articleRepository)
+                onNavigateToAddArticlePage = { navController.navigate("add") },
+                onNavigateToArticleDetailsPage = { navController.navigate("view/${it}") },
             )
         }
-        composable<AddArticle> {
+        composable(route = "add") {
             AddArticlePage(
-                vm = AddArticleViewModel(
-                    articleRepository = articleRepository,
-                    onRedirect = { navController.navigate(ArticleList) }
-                )
+                onRedirect = { navController.navigateUp() },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
-        composable<ArticleDetails> { backStackEntry ->
-            val articleDetails: ArticleDetails = backStackEntry.toRoute()
+        composable(
+            route = "view/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })
+        ) {
             ArticleDetailsPage(
-                onNavigateToUpdateArticlePage = { navController.navigate(UpdateArticle(it)) },
-                vm = ArticleDetailsViewModel(
-                    articleId = articleDetails.id,
-                    articleRepository = articleRepository,
-                    onReturnBack = { navController.navigate(ArticleList) }
-                )
+                onNavigateToUpdateArticlePage = { navController.navigate("edit/${it}") },
+                onReturnBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
             )
         }
-        composable<UpdateArticle> {  backStackEntry ->
-            val updateArticle: UpdateArticle = backStackEntry.toRoute()
+        composable(
+            route = "edit/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })
+        ) {
             UpdateArticlePage(
-                vm = UpdateArticleViewModel(
-                    articleId = updateArticle.id,
-                    articleRepository = articleRepository,
-                    onRedirect = { navController.navigate(ArticleDetails(updateArticle.id)) }
-                )
+                onRedirect = { navController.navigateUp() },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }

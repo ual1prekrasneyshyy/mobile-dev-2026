@@ -9,7 +9,7 @@ class ArticleRepositoryImpl(private val articleDao: ArticleDao): ArticleReposito
 
     override fun getAllArticlesByTitleStream(title: String): Flow<List<Article>> = articleDao.getAllByTitle("%$title%")
 
-    override fun getArticleByIdStream(id: Int): Flow<Article> = articleDao.getById(id)
+    override fun getArticleByIdStream(id: Int): Flow<Article?> = articleDao.getById(id)
 
     override suspend fun insertArticle(article: Article) = articleDao.insert(article)
 

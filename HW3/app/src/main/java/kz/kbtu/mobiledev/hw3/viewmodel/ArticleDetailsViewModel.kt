@@ -1,41 +1,41 @@
 package kz.kbtu.mobiledev.hw3.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import kz.kbtu.mobiledev.hw3.model.entity.Article
+import kz.kbtu.mobiledev.hw3.model.dto.ArticleDetails
+import kz.kbtu.mobiledev.hw3.model.dto.toArticle
+import kz.kbtu.mobiledev.hw3.model.dto.toArticleDetails
 import kz.kbtu.mobiledev.hw3.model.repository.ArticleRepository
 
 class ArticleDetailsViewModel(
-    articleId: Int,
-    val onReturnBack: () -> Unit,
+    savedStateHandle: SavedStateHandle,
     private val articleRepository: ArticleRepository,
 ) : ViewModel() {
-    val articleDetailFlow = articleRepository.getArticleByIdStream(articleId).stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000L), initialValue = Article(0, "", "", "", 0))
+    private val articleId: Int = checkNotNull(savedStateHandle["id"])
 
-    init {
-        viewModelScope.launch {
-            articleRepository.updateArticle(
-                Article(articleId, articleDetailFlow.value.title, articleDetailFlow.value.content, articleDetailFlow.value.author, articleDetailFlow.value.views + 1)
+    val uiState: StateFlow<ArticleDetailsUiState> =
+        articleRepository.getArticleByIdStream(articleId)
+            .filterNotNull()
+            .map { ArticleDetailsUiState(articleDetails = it.toArticleDetails()) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000L),
+                initialValue = ArticleDetailsUiState()
             )
-        }
-    }
 
-    var showDeleteConfirmation by mutableStateOf(false);
 
-    fun deleteArticle() {
-        viewModelScope.launch {
-            articleRepository.deleteArticle(articleDetailFlow.value)
-            print("Removal")
-        }
-        onReturnBack()
+    suspend fun deleteArticle() {
+        articleRepository.deleteArticle(uiState.value.articleDetails.toArticle())
     }
 }
+
+data class ArticleDetailsUiState(
+    val articleDetails: ArticleDetails = ArticleDetails(),
+)

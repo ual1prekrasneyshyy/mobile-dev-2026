@@ -18,17 +18,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val container = AppContainerImpl(this)
-        val articleRepository = container.articleRepository
-
-
-
         enableEdgeToEdge()
         setContent {
             HW3Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        Navigation(articleRepository)
+                        Navigation()
                     }
                 }
             }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -22,17 +23,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kz.kbtu.mobiledev.hw3.ui.theme.Purple40
 import kz.kbtu.mobiledev.hw3.ui.theme.PurpleGrey40
 import kz.kbtu.mobiledev.hw3.viewmodel.ArticlesListViewModel
+import kz.kbtu.mobiledev.hw3.viewmodel.ViewModelFactoryProvider
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun ArticleListPage (
     onNavigateToAddArticlePage: () -> Unit,
     onNavigateToArticleDetailsPage: (id: Int) -> Unit,
-    vm: ArticlesListViewModel
+    vm: ArticlesListViewModel = viewModel(factory = ViewModelFactoryProvider.Factory)
 ) {
-    val articles by vm.articlesFlow.collectAsStateWithLifecycle()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val articles = uiState.articleList
 
     Column {
         Row (
@@ -55,8 +60,8 @@ fun ArticleListPage (
         Spacer(modifier = Modifier.height(5.dp))
 
         OutlinedTextField(
-            value = vm.searchQuery,
-            onValueChange = { vm.searchQuery = it },
+            value = vm.searchQuery.collectAsState().value,
+            onValueChange = { vm.updateSearchQuery(it) },
             label = {Text(text = "Find article")},
             modifier = Modifier.fillMaxWidth().padding(5.dp)
         )
@@ -64,7 +69,7 @@ fun ArticleListPage (
         LazyColumn(
             modifier = Modifier.padding(vertical = 4.dp)
         ) {
-            items(items = articles) {
+            items(items = articles, key = { it.id!! }) {
                 Card(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
                     Text(
                         modifier = Modifier.padding(10.dp),
@@ -90,7 +95,10 @@ fun ArticleListPage (
                     Button(
                         modifier = Modifier.padding(10.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-                        onClick = { onNavigateToArticleDetailsPage(it.id!!) }
+                        onClick = {
+                            vm.addView(it)
+                            onNavigateToArticleDetailsPage(it.id!!)
+                        }
                     ) {
                         Text(text = "Details")
                     }

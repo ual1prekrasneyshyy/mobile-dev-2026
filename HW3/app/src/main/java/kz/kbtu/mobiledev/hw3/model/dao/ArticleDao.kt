@@ -17,7 +17,7 @@ interface ArticleDao {
     fun getAllByTitle(ttl: String): Flow<List<Article>>
 
     @Query("SELECT * FROM articles WHERE id = :articleId")
-    fun getById(articleId: Int): Flow<Article>
+    fun getById(articleId: Int): Flow<Article?>
 
     @Insert
     suspend fun insert(article: Article)
